@@ -1,12 +1,90 @@
-﻿<Window x:Class="PairActivityMonitor.MainWindow"
+﻿<metro:MetroWindow x:Class="PairActivityMonitor.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PairActivityMonitor"
-        mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
-		<TextBlock Text="{Binding EventCounter,StringFormat={}{0} Events}" />
-    </Grid>
-</Window>
+		xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+		mc:Ignorable="d"
+		GlowBrush="Black" BorderThickness="0"
+		Title="Pair Activity Monitor" Width="800" Height="500">
+
+	<metro:MetroWindow.RightWindowCommands>
+		<metro:WindowCommands>
+			<ToggleButton Content="settings" IsChecked="{Binding ElementName=SettingsFlyout, Path=IsOpen}" Cursor="Hand"/>
+		</metro:WindowCommands>
+	</metro:MetroWindow.RightWindowCommands>
+
+
+
+	<metro:MetroAnimatedTabControl>
+		<metro:MetroTabItem Header="activity">
+			<Grid Margin="20">
+				<Grid.RowDefinitions>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="20"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition Height="Auto"/>
+					<RowDefinition/>
+				</Grid.RowDefinitions>
+
+				<TextBlock Text="{Binding EventCounter,StringFormat={}{0} Events}" Grid.Row="0"/>
+				<TextBlock Text="{Binding Percentage,StringFormat={}{0}%}" Grid.Row="2"/>
+				<Slider Grid.Row="3" Width="300" HorizontalAlignment="Left" Minimum="0" Maximum="100" Value="{Binding Percentage}"/>
+
+				<Border Grid.Row="4" Background="{Binding Background}"/>
+				
+			</Grid>
+		</metro:MetroTabItem>
+	</metro:MetroAnimatedTabControl>
+
+
+
+	<metro:MetroWindow.Flyouts>
+		<metro:FlyoutsControl>
+			<metro:Flyout Header="settings" Position="Right" Width="400" x:Name="SettingsFlyout">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition Height="Auto"/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Button Content="b1" Grid.Row="0"/>
+					<Button Content="b2" Grid.Row="1"/>
+				</Grid>
+			</metro:Flyout>
+		</metro:FlyoutsControl>
+	</metro:MetroWindow.Flyouts>
+
+</metro:MetroWindow>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
