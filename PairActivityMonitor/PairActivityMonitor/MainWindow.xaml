@@ -5,6 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:PairActivityMonitor"
 		xmlns:metro="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
+		xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
 		mc:Ignorable="d"
 		GlowBrush="Black" BorderThickness="0"
 		Title="Pair Activity Monitor" Width="800" Height="500">
@@ -22,17 +23,105 @@
 			<Grid Margin="20">
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
-					<RowDefinition Height="20"/>
-					<RowDefinition Height="Auto"/>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
 				</Grid.RowDefinitions>
-
+				
 				<TextBlock Text="{Binding EventCounter,StringFormat={}{0} Events}" Grid.Row="0"/>
-				<TextBlock Text="{Binding Percentage,StringFormat={}{0}%}" Grid.Row="2"/>
-				<Slider Grid.Row="3" Width="300" HorizontalAlignment="Left" Minimum="0" Maximum="100" Value="{Binding Percentage}"/>
 
-				<Border Grid.Row="4" Background="{Binding Background}"/>
+				<Grid Height="100" Grid.Row="1">
+					<Grid.RowDefinitions>
+						<RowDefinition/>
+						<RowDefinition/>
+					</Grid.RowDefinitions>
+					<Grid.ColumnDefinitions>
+						<ColumnDefinition Width="Auto"/>
+						<ColumnDefinition/>
+						<ColumnDefinition Width="Auto"/>
+					</Grid.ColumnDefinitions>
+					<syncfusion:SfChart Name="Chart1" Background="Transparent" AreaBorderThickness="0" Grid.ColumnSpan="3" Grid.RowSpan="2">
+						<syncfusion:SfChart.PrimaryAxis>
+							<syncfusion:CategoryAxis Visibility="Collapsed" ShowGridLines="False"/>
+						</syncfusion:SfChart.PrimaryAxis>
+						<syncfusion:SfChart.SecondaryAxis>
+							<syncfusion:NumericalAxis Visibility="Collapsed" ShowGridLines="False"/>
+						</syncfusion:SfChart.SecondaryAxis>
+						<syncfusion:SfChart.Legend>
+							<syncfusion:ChartLegend Visibility="Collapsed"/>
+						</syncfusion:SfChart.Legend>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P1" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="DeepSkyBlue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P2" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="DarkBlue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+					</syncfusion:SfChart>
+					<syncfusion:SfChart Name="Chart2" Background="Transparent" AreaBorderThickness="0" Grid.ColumnSpan="3" Grid.Row="1" Margin="0,0,0,2">
+						<syncfusion:SfChart.PrimaryAxis>
+							<syncfusion:CategoryAxis Visibility="Collapsed" ShowGridLines="False"/>
+						</syncfusion:SfChart.PrimaryAxis>
+						<syncfusion:SfChart.SecondaryAxis>
+							<syncfusion:NumericalAxis Visibility="Collapsed" ShowGridLines="False"/>
+						</syncfusion:SfChart.SecondaryAxis>
+						<syncfusion:SfChart.Legend>
+							<syncfusion:ChartLegend Visibility="Collapsed"/>
+						</syncfusion:SfChart.Legend>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P1Keyboard" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="Blue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P1Mouse" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="DarkBlue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P2Keyboard" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="DeepSkyBlue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+						<syncfusion:StackingBar100Series Palette="Custom" ItemsSource="{Binding Activities}" XBindingPath="Name" YBindingPath="P2Mouse" ListenPropertyChange="True">
+							<syncfusion:ChartSeriesBase.ColorModel>
+								<syncfusion:ChartColorModel>
+									<syncfusion:ChartColorModel.CustomBrushes>
+										<SolidColorBrush Color="Blue"/>
+									</syncfusion:ChartColorModel.CustomBrushes>
+								</syncfusion:ChartColorModel>
+							</syncfusion:ChartSeriesBase.ColorModel>
+						</syncfusion:StackingBar100Series>
+					</syncfusion:SfChart>
+					<TextBlock Text="{Binding Activities[0].P1Percent,StringFormat={}P1: {0:0.0}%}" Grid.Row="0" Grid.Column="0" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="5"/>
+					<TextBlock Text="{Binding Activities[0].P2Percent,StringFormat={}P2: {0:0.0}%}" Grid.Row="0" Grid.Column="2" Foreground="White" VerticalAlignment="Bottom" HorizontalAlignment="Right" Margin="5"/>
+					<TextBlock Text="Keyboard" Grid.Row="1" Grid.Column="0" Foreground="White" VerticalAlignment="Center"  HorizontalAlignment="Left" Margin="5"/>
+					<TextBlock Text="Mouse" Grid.Row="1" Grid.Column="2" Foreground="White" VerticalAlignment="Center"  HorizontalAlignment="Right" Margin="5"/>
+				</Grid>
+
+				<Border Grid.Row="2" Background="{Binding Background}" Margin="0,-8,0,0"/>
 				
 			</Grid>
 		</metro:MetroTabItem>
