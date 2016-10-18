@@ -16,15 +16,15 @@
 	
 	<metro:MetroWindow.RightWindowCommands>
 		<metro:WindowCommands>
-			<ToggleButton Content="settings" IsChecked="{Binding ElementName=SettingsFlyout, Path=IsOpen}" Cursor="Hand"/>
+			<ToggleButton Content="settings" IsChecked="{Binding Settings_Open}" Cursor="Hand"/>
 		</metro:WindowCommands>
 	</metro:MetroWindow.RightWindowCommands>
 
 
 
-	<metro:MetroAnimatedTabControl>
+	<metro:MetroAnimatedTabControl  Margin="20">
 		<metro:MetroTabItem Header="activity">
-			<Grid Margin="20">
+			<Grid>
 				<Grid.RowDefinitions>
 					<RowDefinition Height="Auto"/>
 					<RowDefinition/>
@@ -142,7 +142,7 @@
 
 	<metro:MetroWindow.Flyouts>
 		<metro:FlyoutsControl>
-			<metro:Flyout Header="settings" Position="Right" Width="250" x:Name="SettingsFlyout" IsOpen="True">
+			<metro:Flyout Header="settings" Position="Right" Width="250" IsOpen="{Binding Settings_Open}">
 				<Grid Margin="20">
 					<Grid.RowDefinitions>
 						<RowDefinition Height="Auto"/>

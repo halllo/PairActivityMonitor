@@ -41,6 +41,8 @@ namespace PairActivityMonitor
 			PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
 		}
 
+		private bool _firstTimeSettingsOpen = true;
+		private bool _settings_Open = true; public bool Settings_Open { get { return _settings_Open; } set { _settings_Open = value; _firstTimeSettingsOpen = false; OnPropertyChanged(); } }
 		bool _settings_P1Keyboard; public bool Settings_P1Keyboard { get { return _settings_P1Keyboard; } set { _settings_P1Keyboard = value; OnPropertyChanged(); } }
 		bool _settings_P1Mouse; public bool Settings_P1Mouse { get { return _settings_P1Mouse; } set { _settings_P1Mouse = value; OnPropertyChanged(); } }
 		bool _settings_P2Keyboard; public bool Settings_P2Keyboard { get { return _settings_P2Keyboard; } set { _settings_P2Keyboard = value; OnPropertyChanged(); } }
@@ -59,6 +61,7 @@ namespace PairActivityMonitor
 		{
 			if (Settings_P1Keyboard) { _keyboardDeviceActions[e.KeyEvent.DeviceName] = (a, v) => a.P1Keyboard += v; Settings_P1Keyboard = false; }
 			if (Settings_P2Keyboard) { _keyboardDeviceActions[e.KeyEvent.DeviceName] = (a, v) => a.P2Keyboard += v; Settings_P2Keyboard = false; }
+			if (_firstTimeSettingsOpen && _keyboardDeviceActions.Count == 2 && 2 == _mouseDeviceActions.Count) Settings_Open = false;
 
 			if (e.KeyEvent.PressState == KeyPressState.Released)
 			{
@@ -66,7 +69,7 @@ namespace PairActivityMonitor
 				if (_keyboardDeviceActions.ContainsKey(e.KeyEvent.DeviceName))
 					_keyboardDeviceActions[e.KeyEvent.DeviceName](activity, 1m);
 				activity.Updated();
-				Background = FarbverlaufRotGrünRot(activity.P1Percent);
+				Background = FarbverlaufRotGrünRotGauss(activity.P1Percent);
 				EventCounter++;
 			}
 		}
@@ -74,6 +77,7 @@ namespace PairActivityMonitor
 		{
 			if (Settings_P1Mouse) { _mouseDeviceActions[e.MouseEvent.DeviceName] = (a, v) => a.P1Mouse += v; Settings_P1Mouse = false; }
 			if (Settings_P2Mouse) { _mouseDeviceActions[e.MouseEvent.DeviceName] = (a, v) => a.P2Mouse += v; Settings_P2Mouse = false; }
+			if (_firstTimeSettingsOpen && _keyboardDeviceActions.Count == 2 && 2 == _mouseDeviceActions.Count) Settings_Open = false;
 
 			var activity = Activities[0];
 			if (_mouseDeviceActions.ContainsKey(e.MouseEvent.DeviceName))
@@ -83,7 +87,7 @@ namespace PairActivityMonitor
 					: 1m);
 
 			activity.Updated();
-			Background = FarbverlaufRotGrünRot(activity.P1Percent);
+			Background = FarbverlaufRotGrünRotGauss(activity.P1Percent);
 			EventCounter++;
 		}
 		private Dictionary<string, Action<PairActivity, decimal>> _mouseDeviceActions = new Dictionary<string, Action<PairActivity, decimal>>();
@@ -94,18 +98,15 @@ namespace PairActivityMonitor
 		private int _eventCounter; public int EventCounter { get { return _eventCounter; } set { _eventCounter = value; OnPropertyChanged(); } }
 
 		private Brush _background = Brushes.Red; public Brush Background { get { return _background; } set { _background = value; OnPropertyChanged(); } }
-		private Brush FarbverlaufRotGrünRot(decimal prozent)
+		private Brush FarbverlaufRotGrünRotGauss(decimal prozent)
 		{
-			var einProzent = 255 / 50.0m;
+			const double a = 1.0;//height of curves peak
+			const double b = 50.0;//center of peak
+			const double c = 10;//standard deviation
+			Func<double, double> gaussianFunction = x => a * Math.Exp(-((x - b) * (x - b)) / (2.0 * c * c));
 
-			if (prozent <= 50.0m)
-			{
-				return new SolidColorBrush(Color.FromRgb((byte)(255 - prozent * einProzent), (byte)(0 + prozent * einProzent), 0));
-			}
-			else
-			{
-				return new SolidColorBrush(Color.FromRgb((byte)(0 + (prozent - 50) * einProzent), (byte)(255 - (prozent - 50) * einProzent), 0));
-			}
+			var fx = gaussianFunction(Convert.ToDouble(prozent));
+			return new SolidColorBrush(Color.FromRgb((byte)(255 * (1.0 - fx)), (byte)(255 * fx), 0));
 		}
 	}
 
