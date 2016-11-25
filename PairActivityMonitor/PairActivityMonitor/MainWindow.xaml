@@ -8,7 +8,13 @@
 		xmlns:syncfusion="http://schemas.syncfusion.com/wpf"
 		mc:Ignorable="d"
 		GlowBrush="Black" BorderThickness="0"
+		Icon="icon.png"
+		ShowIconOnTitleBar="False"
 		Title="Pair Activity Monitor" Width="800" Height="500">
+	
+	<metro:MetroWindow.TaskbarItemInfo>
+		<TaskbarItemInfo x:Name="taskBarItemInfo" ProgressValue="100" />
+	</metro:MetroWindow.TaskbarItemInfo>
 
 	<FrameworkElement.Resources>
 		<local:TrueIsVisible x:Key="trueIsVisible"	/>
@@ -17,6 +23,7 @@
 	<metro:MetroWindow.RightWindowCommands>
 		<metro:WindowCommands>
 			<ToggleButton Content="settings" IsChecked="{Binding Settings_Open}" Cursor="Hand"/>
+			<Button Content="?" Click="GoToWebsite"/>
 		</metro:WindowCommands>
 	</metro:MetroWindow.RightWindowCommands>
 

@@ -7,6 +7,7 @@ using System.Windows;
 using System.Windows.Interop;
 using System.Windows.Media;
 using KeyboardAndMouseEvents;
+using System.Windows.Shell;
 
 namespace PairActivityMonitor
 {
@@ -16,12 +17,17 @@ namespace PairActivityMonitor
 		public MainWindow()
 		{
 			InitializeComponent();
-			DataContext = _mainWindowModel = new MainWindowModel();
+			DataContext = _mainWindowModel = new MainWindowModel { TaskbarInfo = taskBarItemInfo };
 
 			Loaded += (s, a) =>
 			{
 				_mainWindowModel.Start();
 			};
+		}
+
+		private void GoToWebsite(object sender, RoutedEventArgs e)
+		{
+			Process.Start("https://mnsdc.de/projekt/entwicklungswerkzeug/pair-activity-monitor");
 		}
 	}
 
@@ -69,7 +75,9 @@ namespace PairActivityMonitor
 				if (_keyboardDeviceActions.ContainsKey(e.KeyEvent.DeviceName))
 					_keyboardDeviceActions[e.KeyEvent.DeviceName](activity, 1m);
 				activity.Updated();
-				Background = FarbverlaufRotGrünRotGauss(activity.P1Percent);
+				var gauss = Gauss(Convert.ToDouble(activity.P1Percent));
+				Background = FarbverlaufRotGrün(gauss);
+				ColorizeWindowsTaskbarIcon(gauss);
 				EventCounter++;
 			}
 		}
@@ -87,7 +95,9 @@ namespace PairActivityMonitor
 					: 1m);
 
 			activity.Updated();
-			Background = FarbverlaufRotGrünRotGauss(activity.P1Percent);
+			var gauss = Gauss(Convert.ToDouble(activity.P1Percent));
+			Background = FarbverlaufRotGrün(gauss);
+			ColorizeWindowsTaskbarIcon(gauss);
 			EventCounter++;
 		}
 		private Dictionary<string, Action<PairActivity, decimal>> _mouseDeviceActions = new Dictionary<string, Action<PairActivity, decimal>>();
@@ -97,16 +107,28 @@ namespace PairActivityMonitor
 
 		private int _eventCounter; public int EventCounter { get { return _eventCounter; } set { _eventCounter = value; OnPropertyChanged(); } }
 
+		public TaskbarItemInfo TaskbarInfo { get; set; }
+		private void ColorizeWindowsTaskbarIcon(double prozent)
+		{
+			if (prozent > 0.6) TaskbarInfo.ProgressState = TaskbarItemProgressState.Normal;
+			else if (prozent > 0.31) TaskbarInfo.ProgressState = TaskbarItemProgressState.Paused;
+			else TaskbarInfo.ProgressState = TaskbarItemProgressState.Error;
+		}
+
 		private Brush _background = Brushes.Red; public Brush Background { get { return _background; } set { _background = value; OnPropertyChanged(); } }
-		private Brush FarbverlaufRotGrünRotGauss(decimal prozent)
+		private Brush FarbverlaufRotGrün(double prozent)
+		{
+			return new SolidColorBrush(Color.FromRgb((byte)(255 * (1.0 - prozent)), (byte)(255 * prozent), 0));
+		}
+
+		private static double Gauss(double x)
 		{
 			const double a = 1.0;//height of curves peak
 			const double b = 50.0;//center of peak
 			const double c = 10;//standard deviation
-			Func<double, double> gaussianFunction = x => a * Math.Exp(-((x - b) * (x - b)) / (2.0 * c * c));
 
-			var fx = gaussianFunction(Convert.ToDouble(prozent));
-			return new SolidColorBrush(Color.FromRgb((byte)(255 * (1.0 - fx)), (byte)(255 * fx), 0));
+			var fx = a * Math.Exp(-((x - b) * (x - b)) / (2.0 * c * c));
+			return fx;
 		}
 	}
 
